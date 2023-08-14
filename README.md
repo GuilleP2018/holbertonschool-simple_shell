@@ -18,4 +18,5 @@ The Simple Shell is a command line interpreter, and in this project we are creat
 
 
 ### Credits:
-Hi! im Guillermo and im the developer behind this project, here is my github if your interest on more of my projects! : https://github.com/GuilleP2018
+Hi! I'm Guillermo and im the developer behind this project, here is my github if you are interested on more of my projects! : https://github.com/GuilleP2018
+Hi! I'm Hector and im the developer behind this project, here is my github if you are interested on more of my projects! : https://github.com/Pepesaur96
