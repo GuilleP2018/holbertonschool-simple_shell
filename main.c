@@ -14,9 +14,9 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
-	int non_interactive_mode = isatty(STDIN_FILENO) == 0;
+	int non_interactive = isatty(STDIN_FILENO) == 0;
 
-	if (non_interactive_mode)
+	if (non_interactive)
 	{
 		non_interactive_mode(env);
 	}
@@ -44,6 +44,7 @@ int main(int ac, char **av, char **env)
 		free(line);
 		return (0);
 	}
+	return (0);
 }
 
 /**
@@ -96,8 +97,8 @@ void exec_command(char *command, char **env)
 }
 
 /**
- * get_path - gets path of the command
- * @return: the path
+ * get_paths - gets path of the command
+ * Return: the path of the command
  */
 
 char **get_paths(void)
@@ -150,7 +151,7 @@ void non_interactive_mode(char **env)
 			break;
 		if (line[0] == '\0' || line[0] == ' ')
 			continue;
-		execute_command(line, env);
+		exec_command(line, env);
 	}
 
 	free(line);
