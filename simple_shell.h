@@ -10,4 +10,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+void exec_command(char *command, char **env);
+void non_interactive_mode(char **env);
+char **get_paths(void);
+
 #endif
