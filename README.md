@@ -25,4 +25,5 @@ new input.
 
 ### Credits:
 Hi! I'm Guillermo, one of the developers behind this project! Here is my github if you are interested to learn more of my projects! : https://github.com/GuilleP2018
- Hi! I'm Hector, one of the developers behind this project, here is my github if you are interested to learn more of my projects! : https://github.com/Pepesaur96
+
+Hi! I'm Hector, one of the developers behind this project, here is my github if you are interested to learn more of my projects! : https://github.com/Pepesaur96
