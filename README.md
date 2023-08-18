@@ -3,7 +3,7 @@
 ### ᴡʜᴀᴛ ɪꜱ ᴛʜɪꜱ ᴘʀᴏᴊᴇᴄᴛ ᴀʙᴏᴜᴛ?? --PROJECT DESCRIPTION--
 
 :computer: This project aims to recreate a UNIX shell command line interpreter. It will take
-user input, either interactively or not, and process the correct command as intructed by the
+user input, either interactively or not, and process the correct command as instructed by the
 user.
 
 ### 📁 On the project:
@@ -24,5 +24,5 @@ new input.
 
 
 ### Credits:
-Hi! I'm Guillermo and im the developer behind this project, here is my github if you are interested on more of my projects! : https://github.com/GuilleP2018
-Hi! I'm Hector and im the developer behind this project, here is my github if you are interested on more of my projects! : https://github.com/Pepesaur96
+Hi! I'm Guillermo, one of the developers behind this project! Here is my github if you are interested to learn more of my projects! : https://github.com/GuilleP2018
+ Hi! I'm Hector, one of the developers behind this project, here is my github if you are interested to learn more of my projects! : https://github.com/Pepesaur96
