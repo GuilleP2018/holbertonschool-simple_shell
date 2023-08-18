@@ -86,7 +86,7 @@ void exec_command(char *command, char **env)
 	if (child_pid == 0)
 	{
 		execve(tokens[0], tokens, env);
-		perror("error ");
+		perror("./hsh");
 		exit(EXIT_FAILURE);
 	}
 	else
