@@ -6,11 +6,9 @@
 
 ### 📁 On the project:
 
-- 
-- 
-- 
-- 
-- 
+- main.c =
+- simple_shell.h =
+- man_1_simple_shell.3 =
 
 ### What is the simple shell?
 
