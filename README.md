@@ -1,6 +1,6 @@
 # ʜᴏʟʙᴇʀᴛᴏɴꜱᴄʜᴏᴏʟ-Simple Shell :smiley:
 
-### ᴡʜᴀᴛ ɪꜱ ᴛʜɪꜱ ᴘʀᴏᴊᴇᴄᴛ ᴀʙᴏᴜᴛ?? --PROJECT DESCRIPTION--
+# --PROJECT DESCRIPTION--
 
 :computer: This project aims to recreate a UNIX shell command line interpreter. It will take
 user input, either interactively or not, and process the correct command as instructed by the
@@ -18,7 +18,7 @@ user.
 
 The Simple Shell is a command line interpreter, it recieves user input and breaks it down word
 by word. If it finds a command at the start of the input it will compare the input vs the PATH
-commands of the kernel to execute a child function which is a copy of the original found function.
+commands of the kernel to execute a child process which is a copy of the original found function.
 It will then execute the command and return 0 to signal success followed by a new line to receive
 new input.
 
