@@ -44,6 +44,7 @@ int main(int ac, char **av, char **env)
 		free(line);
 		return (0);
 	}
+	free(line);
 	return (0);
 }
 
@@ -81,12 +82,14 @@ void exec_command(char *command, char **env)
 	if (child_pid == -1)
 	{
 		perror("fork");
+		free(tokens);
 		return;
 	}
 	if (child_pid == 0)
 	{
 		execve(tokens[0], tokens, env);
 		perror("error ");
+		free(tokens);
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -121,6 +124,7 @@ char **get_paths(void)
 		if (paths == NULL)
 		{
 			perror("error ");
+			free(paths);
 			return (NULL);
 		}
 		paths[num_paths] = token;
@@ -129,6 +133,8 @@ char **get_paths(void)
 	}
 	paths = realloc(paths, sizeof(char *) * (num_paths + 1));
 	paths[num_paths] = NULL;
+
+	free(paths);
 	return (paths);
 }
 
