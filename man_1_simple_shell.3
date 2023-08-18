@@ -1,0 +1,23 @@
+.TH SIMPLE_SHELL "August 2023" "simple_shell\-0.1" "man Page-user manual"
+.SH NAME
+simple_shell - UNIX command line interpreter
+.SH SYNOPSIS
+.B #include\ "simple_shell.h"
+
+.B ./hsh [command_file [argument...]]
+
+.P
+.SH COMPILE
+ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+.SH DESCRIPTION
+The shell utility is a command language interpreter that will execute commands read from a
+command line string or the standard input. Pathname expansion shall not fail due to size of
+a file.
+.SH RETURN
+ Returns "-1" on error with prompted error line message and "0" on success with new command line.
+.SH BUGS
+ No bugs found as of yet.
+.SH AUTHOR
+ Guillermo J. Pereyo & Hector J. Vazquez
+.SH COPYRIGHT
+.B GNU SHELL Copyright, 08/25/2023
