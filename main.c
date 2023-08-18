@@ -26,7 +26,6 @@ int main(int ac, char **av, char **env)
 		{
 			(void)ac;
 			(void)av;
-
 			printf("($) ");
 			read = getline(&line, &len, stdin);
 			if (read == -1)
@@ -57,8 +56,7 @@ int main(int ac, char **av, char **env)
 void exec_command(char *command, char **env)
 {
 	pid_t child_pid;
-	char *token = NULL;
-	char **tokens = NULL;
+	char *token = NULL, **tokens = NULL;
 	int token_count = 0;
 
 	get_paths();
@@ -88,15 +86,14 @@ void exec_command(char *command, char **env)
 	if (child_pid == 0)
 	{
 		execve(tokens[0], tokens, env);
-		perror("error ");
-		free(tokens);
+		perror("./hsh");
 		exit(EXIT_FAILURE);
 	}
 	else
 	{
 		wait(NULL);
-		free(tokens);
 	}
+	free(tokens);
 }
 
 /**
