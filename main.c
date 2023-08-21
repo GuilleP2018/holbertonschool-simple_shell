@@ -26,7 +26,6 @@ int main(int ac, char **av, char **env)
 		{
 			(void)ac;
 			(void)av;
-
 			printf("($) ");
 			read = getline(&line, &len, stdin);
 			if (read == -1)
@@ -39,25 +38,24 @@ int main(int ac, char **av, char **env)
 				continue;
 			if (line[0] == '\0' || line[0] == ' ')
 				continue;
-			exec_command(line, env);
+			tokenize(line, env);
 		}
 		free(line);
 		return (0);
 	}
+	free(line);
 	return (0);
 }
 
 /**
- * exec_command - function that executes given command
+ * tokenize - function that executes given command
  * @command: command recieved
  * @env: environment recieved
  */
 
-void exec_command(char *command, char **env)
+void tokenize(char *command, char **env)
 {
-	pid_t child_pid;
-	char *token = NULL;
-	char **tokens = NULL;
+	char *token = NULL, **tokens = NULL;
 	int token_count = 0;
 
 	get_paths();
@@ -77,23 +75,7 @@ void exec_command(char *command, char **env)
 		token = strtok(NULL, " \n");
 		tokens[token_count] = NULL;
 	}
-	child_pid = fork();
-	if (child_pid == -1)
-	{
-		perror("fork");
-		return;
-	}
-	if (child_pid == 0)
-	{
-		execve(tokens[0], tokens, env);
-		perror("error ");
-		exit(EXIT_FAILURE);
-	}
-	else
-	{
-		wait(NULL);
-		free(tokens);
-	}
+	exec_command(tokens, env, paths);
 }
 
 /**
@@ -105,7 +87,7 @@ char **get_paths(void)
 {
 	char *path_env = NULL;
 	char *token = NULL;
-	int num_paths = 0;
+	int num_paths = 0, x;
 	char **paths = NULL;
 
 	path_env = getenv("PATH");
@@ -121,6 +103,7 @@ char **get_paths(void)
 		if (paths == NULL)
 		{
 			perror("error ");
+			free(paths);
 			return (NULL);
 		}
 		paths[num_paths] = token;
@@ -129,6 +112,11 @@ char **get_paths(void)
 	}
 	paths = realloc(paths, sizeof(char *) * (num_paths + 1));
 	paths[num_paths] = NULL;
+
+	for (x = 0; paths[x] != NULL; x++)
+	{
+		printf("%s\n", paths[x]);
+	}
 	return (paths);
 }
 
@@ -151,8 +139,46 @@ void non_interactive_mode(char **env)
 			break;
 		if (line[0] == '\0' || line[0] == ' ')
 			continue;
-		exec_command(line, env);
+		tokenize(line, env);
 	}
-
 	free(line);
 }
+
+/**
+ * exec_command - function to check for command and execute in child process
+ * @tokens: array of strings inputed by user
+ * @
+ */
+
+void exec_command (char **tokens, char **env, char **paths)
+{
+	struct stat command_info;
+	pid_t child_pid;
+
+	if (stat(tokens[0], &command_info) == 0)
+	{
+		child_pid = fork();
+		if (child_pid == -1)
+		{
+			perror("fork");
+			free(tokens);
+			return;
+		}
+		if (child_pid == 0)
+		{
+			execve(tokens[0], tokens, env);
+			perror("error: ");
+			free(paths);
+			exit("EXIT_FAILURE");
+		}
+		else
+			wait(NULL);
+	}
+	else
+		printf("Command not found \n");
+	free(tokens);
+}
+
+
+
+
