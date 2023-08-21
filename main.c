@@ -85,9 +85,11 @@ void exec_command(char *command, char **env)
 	}
 	if (child_pid == 0)
 	{
-		execve(tokens[0], tokens, env);
-		perror("./hsh");
-		exit(EXIT_FAILURE);
+		if (execve(tokens[0], tokens, env) == -1)
+		{
+			perror("./hsh");
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
@@ -155,6 +157,5 @@ void non_interactive_mode(char **env)
 			continue;
 		exec_command(line, env);
 	}
-
 	free(line);
 }
