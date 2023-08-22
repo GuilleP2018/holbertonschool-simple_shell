@@ -14,7 +14,7 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
-	int non_interactive = isatty(STDIN_FILENO) == 0;
+	int non_interactive = isatty(STDIN_FILENO);
 
 	if (non_interactive)
 	{
@@ -55,7 +55,7 @@ int main(int ac, char **av, char **env)
 
 void tokenize(char *command, char **env)
 {
-	char *token = NULL, **tokens = NULL;
+	char *token = NULL, **tokens = NULL, **paths = NULL;
 	int token_count = 0;
 
 	get_paths();
@@ -121,30 +121,6 @@ char **get_paths(void)
 }
 
 /**
- * non_interactive_mode - function to handle non interactive mode
- * @env: environment var
- */
-
-void non_interactive_mode(char **env)
-{
-	char *line = NULL;
-	size_t len = 0;
-	ssize_t read;
-
-	while ((read = getline(&line, &len, stdin)) != -1)
-	{
-		if (read > 0 && line[read - 1] == '\n')
-			line[read - 1] = '\0';
-		if (strcmp(line, "exit") == 0)
-			break;
-		if (line[0] == '\0' || line[0] == ' ')
-			continue;
-		tokenize(line, env);
-	}
-	free(line);
-}
-
-/**
  * exec_command - function to check for command and execute in child process
  * @tokens: array of strings inputed by user
  * @
@@ -152,10 +128,15 @@ void non_interactive_mode(char **env)
 
 void exec_command (char **tokens, char **env, char **paths)
 {
-	struct stat command_info;
 	pid_t child_pid;
 
-	if (stat(tokens[0], &command_info) == 0)
+	if (access(tokens, X_OK) == -1)
+	{
+		perror("error ");
+		free(tokens);
+		return;
+	}
+	else
 	{
 		child_pid = fork();
 		if (child_pid == -1)
@@ -166,16 +147,16 @@ void exec_command (char **tokens, char **env, char **paths)
 		}
 		if (child_pid == 0)
 		{
-			execve(tokens[0], tokens, env);
-			perror("error: ");
-			free(paths);
-			exit("EXIT_FAILURE");
+			if (execve(tokens[0], tokens, env) == -1)
+			{
+				perror("error: ");
+				free(paths);
+				exit(EXIT_FAILURE);
+			}
 		}
 		else
 			wait(NULL);
 	}
-	else
-		printf("Command not found \n");
 	free(tokens);
 }
 

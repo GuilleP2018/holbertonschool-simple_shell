@@ -11,8 +11,9 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-void exec_command(char *command, char **env);
+void tokenize(char *command, char **env);
 void non_interactive_mode(char **env);
 char **get_paths(void);
+void exec_command(char **tokens, char **env, char **paths);
 
 #endif
