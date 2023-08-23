@@ -11,8 +11,11 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-void exec_command(char *command, char **env);
+
 void non_interactive_mode(char **env);
-char **get_paths(void);
+char *full_path_process(char *command, char **paths);
+void child_exec(char **tokens, char **env, char *full_path);
+void exec_command(char *command, char **env);
+char **get_path(void);
 
 #endif
