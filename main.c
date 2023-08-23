@@ -14,7 +14,7 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
-	int non_interactive = isatty(STDIN_FILENO);
+	int non_interactive = isatty(STDIN_FILENO) == 0;
 
 	if (non_interactive)
 	{
@@ -38,30 +38,32 @@ int main(int ac, char **av, char **env)
 				continue;
 			if (line[0] == '\0' || line[0] == ' ')
 				continue;
-			tokenize(line, env);
+			exec_command(line, env);
 		}
-		free(line);
-		return (0);
 	}
-	free(line);
 	return (0);
 }
 
 /**
- * tokenize - function that executes given command
- * @command: command recieved
- * @env: environment recieved
+ * exec_command - Execute a command using fork and execve
+ * @command: The command to execute
+ * @env: The environment variables
  */
-
-void tokenize(char *command, char **env)
+void exec_command(char *command, char **env)
 {
-	char *token = NULL, **tokens = NULL, **paths = NULL;
+char *token = NULL;
+	char **tokens = NULL;
 	int token_count = 0;
+	char *full_path;
+	char **paths = get_path();
 
-	get_paths();
+	if (paths == NULL)
+		return;
+
 	token = strtok(command, " \n");
 	if (token == NULL)
 		return;
+
 	while (token != NULL)
 	{
 		tokens = realloc(tokens, sizeof(char *) * (token_count + 1));
@@ -75,19 +77,95 @@ void tokenize(char *command, char **env)
 		token = strtok(NULL, " \n");
 		tokens[token_count] = NULL;
 	}
-	exec_command(tokens, env, paths);
+
+	full_path = full_path_process(tokens[0], paths);
+	if (full_path != NULL)
+	{
+		child_exec(tokens, env, full_path);
+		free(full_path);
+	}
+	else
+	{
+		printf("Command not found: %s\n", tokens[0]);
+	}
+
+	free(tokens);
 }
 
 /**
- * get_paths - gets path of the command
- * Return: the path of the command
+ * child_exec - Create a child process and execute the command
+ * @tokens: The tokenized command and arguments
+ * @full_path: path concat
+ * @env: The environment variables
  */
+void child_exec(char **tokens, char **env, char *full_path)
+{
+	pid_t child_pid;
 
-char **get_paths(void)
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("fork");
+		return;
+	}
+	if (child_pid == 0)
+	{
+		execve(full_path, tokens, env);
+		perror("error ");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		wait(NULL);
+	}
+}
+
+/**
+ * full_path_process - Constructs full path for command using available paths
+ * @command: The command for which to construct the full path
+ * @paths: An array of paths to search for the command
+ * Return: A dynamically allocated string containing the full path,
+ *         or NULL if the command is not found in any of the paths
+ */
+char *full_path_process(char *command, char **paths)
+{
+	int i = 0;
+	char *full_path = NULL;
+
+	while (paths[i] != NULL)
+	{
+		full_path = malloc(strlen(paths[i]) + strlen(command) + 2);
+		if (full_path == NULL)
+		{
+			perror("malloc");
+			return (NULL);
+		}
+		if (access(command, X_OK) == -1)
+		{
+			strcpy(full_path, paths[i]);
+			strcat(full_path, "/");
+			strcat(full_path, command);
+			if (access(full_path, X_OK) == 0)
+				return (full_path);
+			free(full_path);
+			i++;
+			break;
+		}
+		else
+			return (command);
+	}
+	return (NULL);
+}
+/**
+ * get_path - Extracts paths from the PATH environment variable
+ * Return: A pointer to an array of strings containing the paths
+ *         NULL on failure or if PATH is not found
+ */
+char **get_path(void)
 {
 	char *path_env = NULL;
 	char *token = NULL;
-	int num_paths = 0, x;
+	int num_paths = 0;
 	char **paths = NULL;
 
 	path_env = getenv("PATH");
@@ -96,6 +174,7 @@ char **get_paths(void)
 		perror("error ");
 		return (NULL);
 	}
+
 	token = strtok(path_env, ":");
 	while (token != NULL)
 	{
@@ -113,53 +192,6 @@ char **get_paths(void)
 	paths = realloc(paths, sizeof(char *) * (num_paths + 1));
 	paths[num_paths] = NULL;
 
-	for (x = 0; paths[x] != NULL; x++)
-	{
-		printf("%s\n", paths[x]);
-	}
 	return (paths);
 }
-
-/**
- * exec_command - function to check for command and execute in child process
- * @tokens: array of strings inputed by user
- * @
- */
-
-void exec_command (char **tokens, char **env, char **paths)
-{
-	pid_t child_pid;
-
-	if (access(tokens, X_OK) == -1)
-	{
-		perror("error ");
-		free(tokens);
-		return;
-	}
-	else
-	{
-		child_pid = fork();
-		if (child_pid == -1)
-		{
-			perror("fork");
-			free(tokens);
-			return;
-		}
-		if (child_pid == 0)
-		{
-			if (execve(tokens[0], tokens, env) == -1)
-			{
-				perror("error: ");
-				free(paths);
-				exit(EXIT_FAILURE);
-			}
-		}
-		else
-			wait(NULL);
-	}
-	free(tokens);
-}
-
-
-
 

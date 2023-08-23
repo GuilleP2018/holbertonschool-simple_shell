@@ -19,7 +19,7 @@ void non_interactive_mode(char **env)
 			break;
 		if (line[0] == '\0' || line[0] == ' ')
 			continue;
-		tokenize(line, env);
+		exec_command(line, env);
 	}
 	free(line);
 }
