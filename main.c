@@ -82,6 +82,7 @@ void exec_command(char *command, char **env)
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
 	free(token);
+	free(full_path);
 }
 
 /**
@@ -113,52 +114,10 @@ void child_exec(char **tokens, char **env)
 }
 
 /**
- * get_path - Extracts paths from the PATH environment variable
- * Return: A pointer to an array of strings containing the paths
- *         NULL on failure or if PATH is not found
+ * find_path - finds and concats path to command
+ * @command: given command
+ * Return: full_path which is the command
  */
-
-char **get_path(void)
-{
-	char *path_env = NULL;
-	char *token = NULL;
-	int num_paths = 0;
-	char **paths = NULL;
-
-	path_env = getenv("PATH");
-	if (path_env == NULL)
-	{
-		perror("error ");
-		return (NULL);
-	}
-
-	token = strtok(path_env, ":");
-	while (token != NULL)
-	{
-		paths = malloc(strlen(token) + 22);
-		if (paths == NULL)
-		{
-			perror("error ");
-			free_array(paths, num_paths);
-			return (NULL);
-		}
-		paths[num_paths] = strdup(token);
-		num_paths++;
-		token = strtok(NULL, ":");
-	}
-	paths = realloc(paths, sizeof(char *) * (num_paths + 1));
-	if (paths == NULL)
-	{
-		perror("error ");
-		free_array(paths, num_paths);
-		return (NULL);
-	}
-	paths[num_paths] = NULL;
-	free(path_env);
-	return (paths);
-}
-
-
 
 char *find_path(const char *command)
 {
@@ -180,6 +139,8 @@ char *find_path(const char *command)
 		dir = strtok(NULL, ":");
 	}
 	free(path_copy);
+	free(dir);
+	free(path);
 	return (NULL);
 }
 
