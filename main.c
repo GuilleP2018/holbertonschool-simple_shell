@@ -81,6 +81,7 @@ void exec_command(char *command, char **env)
 		return;
 	}
 	tokens[token_count] = NULL;
+
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
 }
@@ -136,7 +137,7 @@ char **get_path(void)
 	token = strtok(path_env, ":");
 	while (token != NULL)
 	{
-		paths = realloc(paths, sizeof(char *) * (num_paths + 1));
+		paths = malloc(strlen(token) + 22);
 		if (paths == NULL)
 		{
 			perror("error ");
@@ -160,9 +161,9 @@ char **get_path(void)
 }
 
 /**
- * free_token_array - Frees memory allocated for token array and token strings
- * @tokens: The token array to be freed
- * @token_count: The number of tokens in the array
+ * free_array - Frees memory allocated for arrays
+ * @tokens: The array to be freed
+ * @token_count: The number of strings in the array
  */
 void free_array(char **array, int n)
 {
