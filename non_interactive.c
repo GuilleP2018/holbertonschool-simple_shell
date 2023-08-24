@@ -20,7 +20,7 @@ void non_interactive_mode(char **env)
 		if (line[0] == '\0' || line[0] == ' ')
 			continue;
 		exec_command(line, env);
+		free(line);
 	}
-	free(line);
 }
 
