@@ -108,11 +108,11 @@ void child_exec(char **tokens, char **env, char *full_path)
 	}
 	if (child_pid == 0)
 	{
-			if (execve(full_path, tokens, env) == -1)
-			{
-				perror("./hsh");
-				exit(EXIT_FAILURE);
-			}
+		if (execve(full_path, tokens, env) == -1)
+		{
+			perror("./hsh");
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
