@@ -24,6 +24,7 @@ int main(int ac, char **av, char **env)
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 			break;
+		trim(line);
 		if (line[read - 1] == '\n')
 			line[read - 1] = '\0';
 		if (strcmp(line, "exit") == 0)
@@ -168,3 +169,33 @@ void free_array(char **array, int n)
 	}
 	free(array);
 }
+
+/**
+ * trim - removes whitespace
+ * @str: string given
+ */
+
+void trim(char *str)
+{
+	int start = 0;
+	int end = strlen(str) - 1;
+	int index = 0;
+	int i;
+
+	while (isspace(str[start])) {
+		start++;
+	}
+
+	while (end >= 0 && isspace(str[end])) {
+		end--;
+	}
+
+
+	for (i = start; i <= end; i++)
+	{
+		str[index++] = str[i];
+	}
+
+	str[index] = '\0';
+}
+
