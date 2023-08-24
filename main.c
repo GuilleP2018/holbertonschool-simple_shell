@@ -40,7 +40,10 @@ int main(int ac, char **av, char **env)
 				continue;
 			exec_command(line, env);
 		}
+		free(line);
+		return (0);
 	}
+	free(line);
 	return (0);
 }
 
@@ -51,15 +54,10 @@ int main(int ac, char **av, char **env)
  */
 void exec_command(char *command, char **env)
 {
-char *token = NULL;
+	char *token = NULL;
 	char **tokens = NULL;
 	int token_count = 0;
-	char *full_path;
-	char **paths = get_path();
-
-	if (paths == NULL)
-		return;
-
+	
 	token = strtok(command, " \n");
 	if (token == NULL)
 		return;
@@ -72,24 +70,19 @@ char *token = NULL;
 			perror("realloc");
 			return;
 		}
-		tokens[token_count] = token;
+		tokens[token_count] = strdup(token);
 		token_count++;
 		token = strtok(NULL, " \n");
-		tokens[token_count] = NULL;
 	}
-
-	full_path = full_path_process(tokens[0], paths);
-	if (full_path != NULL)
+	tokens = realloc(tokens, sizeof(char *) * (token_count + 1));
+	if (tokens == NULL)
 	{
-		child_exec(tokens, env, full_path);
-		free(full_path);
+		perror("realloc");
+		return;
 	}
-	else
-	{
-		printf("Command not found: %s\n", tokens[0]);
-	}
-
-	free(tokens);
+	tokens[token_count] = NULL;
+	child_exec(tokens, env);
+	free_array(tokens, token_count);
 }
 
 /**
@@ -98,7 +91,7 @@ char *token = NULL;
  * @full_path: path concat
  * @env: The environment variables
  */
-void child_exec(char **tokens, char **env, char *full_path)
+void child_exec(char **tokens, char **env)
 {
 	pid_t child_pid;
 
@@ -110,7 +103,7 @@ void child_exec(char **tokens, char **env, char *full_path)
 	}
 	if (child_pid == 0)
 	{
-		execve(full_path, tokens, env);
+		execve(tokens[0], tokens, env);
 		perror("error ");
 		exit(EXIT_FAILURE);
 	}
@@ -121,46 +114,11 @@ void child_exec(char **tokens, char **env, char *full_path)
 }
 
 /**
- * full_path_process - Constructs full path for command using available paths
- * @command: The command for which to construct the full path
- * @paths: An array of paths to search for the command
- * Return: A dynamically allocated string containing the full path,
- *         or NULL if the command is not found in any of the paths
- */
-char *full_path_process(char *command, char **paths)
-{
-	int i = 0;
-	char *full_path = NULL;
-
-	while (paths[i] != NULL)
-	{
-		full_path = malloc(strlen(paths[i]) + strlen(command) + 2);
-		if (full_path == NULL)
-		{
-			perror("malloc");
-			return (NULL);
-		}
-		if (access(command, X_OK) == -1)
-		{
-			strcpy(full_path, paths[i]);
-			strcat(full_path, "/");
-			strcat(full_path, command);
-			if (access(full_path, X_OK) == 0)
-				return (full_path);
-			free(full_path);
-			i++;
-			break;
-		}
-		else
-			return (command);
-	}
-	return (NULL);
-}
-/**
  * get_path - Extracts paths from the PATH environment variable
  * Return: A pointer to an array of strings containing the paths
  *         NULL on failure or if PATH is not found
  */
+
 char **get_path(void)
 {
 	char *path_env = NULL;
@@ -182,16 +140,38 @@ char **get_path(void)
 		if (paths == NULL)
 		{
 			perror("error ");
-			free(paths);
+			free_array(paths, num_paths);
 			return (NULL);
 		}
-		paths[num_paths] = token;
+		paths[num_paths] = strdup(token);
 		num_paths++;
 		token = strtok(NULL, ":");
 	}
 	paths = realloc(paths, sizeof(char *) * (num_paths + 1));
+	if (paths == NULL)
+	{
+		perror("error ");
+		free_array(paths, num_paths);
+		return (NULL);
+	}
 	paths[num_paths] = NULL;
-
+	free(path_env);
 	return (paths);
+}
+
+/**
+ * free_token_array - Frees memory allocated for token array and token strings
+ * @tokens: The token array to be freed
+ * @token_count: The number of tokens in the array
+ */
+void free_array(char **array, int n)
+{
+	int i;
+
+	for (i = 0; i < n; i++)
+	{
+		free(array[i]);
+	}
+	free(array);
 }
 
