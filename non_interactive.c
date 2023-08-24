@@ -23,4 +23,3 @@ void non_interactive_mode(char **env)
 		free(line);
 	}
 }
-
