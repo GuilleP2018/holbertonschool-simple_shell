@@ -12,7 +12,7 @@
 #include <ctype.h>
 
 
-void non_interactive_mode(char **env);
+
 void child_exec(char **tokens, char **env);
 void exec_command(char *command, char **env);
 char **get_path(void);

@@ -14,35 +14,27 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
-	int non_interactive = isatty(STDIN_FILENO) == 0;
 
-	if (non_interactive)
+	while (1)
 	{
-		non_interactive_mode(env);
+		if (isatty(0))
+			write(STDOUT_FILENO, "$ ", 2);
+		(void)ac;
+		(void)av;
+		read = getline(&line, &len, stdin);
+		if (read == -1)
+			break;
+		if (line[read - 1] == '\n')
+			line[read - 1] = '\0';
+		if (strcmp(line, "exit") == 0)
+			break;
+		if (isspace((unsigned char)line[0]))
+			continue;
+		if (line[0] == '\0' || line[0] == ' ')
+			continue;
+		exec_command(line, env);
 	}
-	else
-	{
-		while (1)
-		{
-			(void)ac;
-			(void)av;
-			printf("($) ");
-			read = getline(&line, &len, stdin);
-			if (read == -1)
-				break;
-			if (line[read - 1] == '\n')
-				line[read - 1] = '\0';
-			if (strcmp(line, "exit") == 0)
-				break;
-			if (isspace((unsigned char)line[0]))
-				continue;
-			if (line[0] == '\0' || line[0] == ' ')
-				continue;
-			exec_command(line, env);
-		}
-		free(line);
-		return (0);
-	}
+	free(line);
 	return (0);
 }
 
@@ -56,7 +48,7 @@ void exec_command(char *command, char **env)
 	char *token = NULL;
 	char **tokens = NULL;
 	int token_count = 0;
-	
+
 	token = strtok(command, " \n");
 	if (token == NULL)
 		return;
@@ -83,6 +75,7 @@ void exec_command(char *command, char **env)
 
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
+	free(token);
 }
 
 /**
@@ -94,6 +87,7 @@ void exec_command(char *command, char **env)
 void child_exec(char **tokens, char **env)
 {
 	pid_t child_pid;
+	int status;
 
 	child_pid = fork();
 	if (child_pid == -1)
@@ -109,7 +103,7 @@ void child_exec(char **tokens, char **env)
 	}
 	else
 	{
-		wait(NULL);
+		waitpid(child_pid, &status, 0);
 	}
 }
 
