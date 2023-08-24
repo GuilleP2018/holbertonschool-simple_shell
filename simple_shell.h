@@ -18,5 +18,7 @@ void exec_command(char *command, char **env);
 char **get_path(void);
 void free_array(char **array, int n);
 void trim(char *str);
+char *find_path(const char *command);
+
 
 #endif

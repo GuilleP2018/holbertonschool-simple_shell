@@ -49,6 +49,7 @@ void exec_command(char *command, char **env)
 	char *token = NULL;
 	char **tokens = NULL;
 	int token_count = 0;
+	char *full_path;
 
 	token = strtok(command, " \n");
 	if (token == NULL)
@@ -74,6 +75,10 @@ void exec_command(char *command, char **env)
 	}
 	tokens[token_count] = NULL;
 
+	if (access(tokens[0], X_OK) == -1)
+		full_path = find_path(tokens[0]);
+
+	tokens[0] = strdup(full_path);
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
 	free(token);
@@ -151,5 +156,30 @@ char **get_path(void)
 	paths[num_paths] = NULL;
 	free(path_env);
 	return (paths);
+}
+
+
+
+char *find_path(const char *command)
+{
+	char *path = getenv("PATH");
+	char *path_copy = strdup(path);
+	char *dir, *full_path;
+
+	dir = strtok(path_copy, ":");
+	while (dir != NULL) {
+		full_path = malloc(strlen(dir) + strlen(command) + 2);
+		strcpy(full_path, dir);
+		strcat(full_path, "/");
+		strcat(full_path, command);
+		if (access(full_path, X_OK) == 0) {
+			free(path_copy);
+			return (full_path);
+		}
+		free(full_path);
+		dir = strtok(NULL, ":");
+	}
+	free(path_copy);
+	return (NULL);
 }
 
