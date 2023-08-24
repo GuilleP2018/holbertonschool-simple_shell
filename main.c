@@ -81,8 +81,6 @@ void exec_command(char *command, char **env)
 	tokens[0] = strdup(full_path);
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
-	free(token);
-	free(full_path);
 }
 
 /**
@@ -123,11 +121,18 @@ char *find_path(const char *command)
 {
 	char *path = getenv("PATH");
 	char *path_copy = strdup(path);
-	char *dir, *full_path;
+	char *dir, *full_path = NULL;
 
 	dir = strtok(path_copy, ":");
-	while (dir != NULL) {
+	while (dir != NULL)
+	{
 		full_path = malloc(strlen(dir) + strlen(command) + 2);
+		if (full_path == NULL)
+		{
+			perror("malloc");
+			free(path_copy);
+			return (NULL);
+		}
 		strcpy(full_path, dir);
 		strcat(full_path, "/");
 		strcat(full_path, command);
@@ -139,8 +144,6 @@ char *find_path(const char *command)
 		dir = strtok(NULL, ":");
 	}
 	free(path_copy);
-	free(dir);
-	free(path);
 	return (NULL);
 }
 
