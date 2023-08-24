@@ -41,7 +41,6 @@ int main(int ac, char **av, char **env)
 			exec_command(line, env);
 		}
 	}
-
 	return (0);
 }
 
@@ -88,6 +87,7 @@ void exec_command(char *command, char **env)
 		printf("Command not found: %s\n", tokens[0]);
 		free(full_path);
 	}
+	free(tokens);
 }
 
 /**
@@ -104,22 +104,20 @@ void child_exec(char **tokens, char **env, char *full_path)
 	if (child_pid == -1)
 	{
 		perror("fork");
-		free(tokens);
 		return;
 	}
 	if (child_pid == 0)
 	{
-		if (execve(full_path, tokens, env) == -1)
-		{
-			perror("./hsh");
-			exit(EXIT_FAILURE);
-		}
+			if (execve(full_path, tokens, env) == -1)
+			{
+				perror("./hsh");
+				exit(EXIT_FAILURE);
+			}
 	}
 	else
 	{
 		wait(NULL);
 	}
-	free(tokens);
 }
 
 /**
@@ -196,6 +194,3 @@ char **get_path(void)
 
 	return (paths);
 }
-
-
-
