@@ -116,7 +116,7 @@ void child_exec(char **tokens, char **env)
 
 /**
  * find_path - finds and concats path to command
- * @command: given command
+ * @command_name: given command
  * Return: full_path which is the command
  */
 

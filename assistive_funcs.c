@@ -3,6 +3,7 @@
 /**
  * trim - removes whitespace
  * @str: string given
+ * Return: trimmed str
  */
 
 char *trim(char *str)
@@ -36,3 +37,5 @@ void free_array(char **array, int n)
 	}
 	free(array);
 }
+
+

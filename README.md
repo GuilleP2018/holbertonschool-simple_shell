@@ -9,6 +9,8 @@ user.
 ### 📁 On the project:
 
 - main.c
+    -main = verifies whether it is interactive or non interactive and gets
+    -
 - assistive_funcs.c
 - simple_shell.h
 - man_1_simple_shell.3
