@@ -23,6 +23,9 @@ commands of the kernel to execute a child process which is a copy of the origina
 It will then execute the command and return 0 to signal success followed by a new line to receive
 new input.
 
+Here is a blog we wrote explaining it more thoroughly:
+
+https://www.linkedin.com/pulse/what-happens-shell-stays-well-sorta-h%2525C3%2525A9ctor-v%2525C3%2525A1zquez%3FtrackingId=ARmsQStUThuKza90P9EowA%253D%253D/?trackingId=ARmsQStUThuKza90P9EowA%3D%3D
 
 ### Credits:
 Hi! I'm Guillermo, one of the developers behind this project! Here is my github if you are interested to learn more about my projects! : https://github.com/GuilleP2018
