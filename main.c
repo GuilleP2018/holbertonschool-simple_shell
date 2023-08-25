@@ -54,13 +54,19 @@ void exec_command(char *command, char **env)
 	token = strtok(command, " \n");
 	if (token == NULL)
 		return;
-
+	tokens = malloc(sizeof(char *));
+	if (tokens == NULL)
+	{
+		perror("malloc");
+		return;
+	}
 	while (token != NULL)
 	{
 		tokens = realloc(tokens, sizeof(char *) * (token_count + 1));
 		if (tokens == NULL)
 		{
 			perror("realloc");
+			free_array(tokens, token_count);
 			return;
 		}
 		tokens[token_count] = strdup(token);
@@ -74,11 +80,10 @@ void exec_command(char *command, char **env)
 		return;
 	}
 	tokens[token_count] = NULL;
-
 	if (access(tokens[0], X_OK) == -1)
 		full_path = find_path(tokens[0]);
-
-	tokens[0] = strdup(full_path);
+	free(tokens[0]);
+	tokens[0] = full_path;
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
 }
@@ -93,6 +98,11 @@ void child_exec(char **tokens, char **env)
 	pid_t child_pid;
 	int status;
 
+	if (tokens == NULL)
+	{
+		perror("error ");
+		return;
+	}
 	child_pid = fork();
 	if (child_pid == -1)
 	{
@@ -101,9 +111,11 @@ void child_exec(char **tokens, char **env)
 	}
 	if (child_pid == 0)
 	{
-		execve(tokens[0], tokens, env);
+		if (execve(tokens[0], tokens, env) == -1)
+		{
 		perror("error ");
 		exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
@@ -131,12 +143,15 @@ char *find_path(const char *command)
 		{
 			perror("malloc");
 			free(path_copy);
+			free(dir);
+			free(full_path);
 			return (NULL);
 		}
 		strcpy(full_path, dir);
 		strcat(full_path, "/");
 		strcat(full_path, command);
-		if (access(full_path, X_OK) == 0) {
+		if (access(full_path, X_OK) == 0)
+		{
 			free(path_copy);
 			return (full_path);
 		}
@@ -144,6 +159,8 @@ char *find_path(const char *command)
 		dir = strtok(NULL, ":");
 	}
 	free(path_copy);
+	free(full_path);
+	free(dir);
+	free(path);
 	return (NULL);
 }
-
