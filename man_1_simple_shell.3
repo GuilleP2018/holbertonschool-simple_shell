@@ -6,6 +6,17 @@ simple_shell - UNIX command line interpreter
 
 .B ./hsh [command_file [argument...]]
 
+.SH INTERACTION EXAMPLES
+
+.B Non-Interactive
+- $ echo "ls" | ./hsh
+
+.B Initialize Program
+- $ ./shs
+
+.B Interactive
+- $ ls
+
 .P
 .SH COMPILE
  gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
