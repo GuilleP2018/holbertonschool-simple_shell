@@ -10,9 +10,12 @@ simple_shell - UNIX command line interpreter
 .SH COMPILE
  gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 .SH DESCRIPTION
-The shell utility is a command language interpreter that will execute commands read from a
-command line string or the standard input. Pathname expansion shall not fail due to size of
-a file.
+The simple shell utility is a command language interpreter that will execute commands read from a
+command line string or the standard input. It cleans any spaces in the string to make sure all
+commands will be executed and parses the commands with the text into tokens. It checks the first
+token with the array of system calls available in the PATH enviroment and creates a child process
+if it found a match. Once the child process completes it displays the result to the main output
+and displays a new prompt for command.
 .SH RETURN
  Returns "-1" on error with prompted error line message and "0" on success with new command line.
 .SH BUGS
