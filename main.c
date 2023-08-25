@@ -32,7 +32,7 @@ int main(int ac, char **av, char **env)
 			continue;
 		if (line[0] == '\0' || line[0] == ' ')
 			continue;
-		exec_command(line, env);
+		exec_command(trimmed_line, env);
 	}
 	free(line);
 	return (0);
