@@ -17,8 +17,8 @@ void child_exec(char **tokens, char **env);
 void exec_command(char *command, char **env);
 char **get_path(void);
 void free_array(char **array, int n);
-void trim(char *str);
-char *find_path(const char *command);
+char *trim(char *str);
+char *find_path(char *command_name);
 
 
 #endif

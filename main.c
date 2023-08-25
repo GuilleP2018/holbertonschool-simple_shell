@@ -14,6 +14,7 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
+	char *trimmed_line;
 
 	while (1)
 	{
@@ -24,10 +25,8 @@ int main(int ac, char **av, char **env)
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 			break;
-		trim(line);
-		if (line[read - 1] == '\n')
-			line[read - 1] = '\0';
-		if (strcmp(line, "exit") == 0)
+		trimmed_line = trim(line);
+		if (strcmp(trimmed_line, "exit") == 0)
 			break;
 		if (isspace((unsigned char)line[0]))
 			continue;
@@ -49,23 +48,17 @@ void exec_command(char *command, char **env)
 	char *token = NULL;
 	char **tokens = NULL;
 	int token_count = 0;
+	char *full_path;
 
 	token = strtok(command, " \n");
 	if (token == NULL)
 		return;
-	tokens = malloc(sizeof(char *));
-	if (tokens == NULL)
-	{
-		perror("malloc");
-		return;
-	}
 	while (token != NULL)
 	{
 		tokens = realloc(tokens, sizeof(char *) * (token_count + 1));
 		if (tokens == NULL)
 		{
 			perror("realloc");
-			free_array(tokens, token_count);
 			return;
 		}
 		tokens[token_count] = strdup(token);
@@ -79,6 +72,14 @@ void exec_command(char *command, char **env)
 		return;
 	}
 	tokens[token_count] = NULL;
+	full_path = find_path(tokens[0]);
+	if (full_path == NULL)
+	{
+		free_array(tokens, token_count);
+		return;
+	}
+	free(tokens[0]);
+	tokens[0] = full_path;
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
 }
@@ -93,11 +94,6 @@ void child_exec(char **tokens, char **env)
 	pid_t child_pid;
 	int status;
 
-	if (tokens == NULL)
-	{
-		perror("error ");
-		return;
-	}
 	child_pid = fork();
 	if (child_pid == -1)
 	{
@@ -124,38 +120,36 @@ void child_exec(char **tokens, char **env)
  * Return: full_path which is the command
  */
 
-char *find_path(const char *command)
+char *find_path(char *command_name)
 {
-	char *path = getenv("PATH");
-	char *path_copy = strdup(path);
-	char *dir, *full_path = NULL;
+	char *command_path = "/bin/";
+	char *full_path;
 
-	dir = strtok(path_copy, ":");
-	while (dir != NULL)
+	if (access(command_name, X_OK) == 0)
 	{
-		full_path = malloc(strlen(dir) + strlen(command) + 2);
+		full_path = strdup(command_name);
 		if (full_path == NULL)
 		{
 			perror("malloc");
-			free(path_copy);
-			free(dir);
-			free(full_path);
 			return (NULL);
 		}
-		strcpy(full_path, dir);
-		strcat(full_path, "/");
-		strcat(full_path, command);
-		if (access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			return (full_path);
-		}
-		free(full_path);
-		dir = strtok(NULL, ":");
+		return (full_path);
 	}
-	free(path_copy);
-	free(full_path);
-	free(dir);
-	free(path);
-	return (NULL);
+
+	full_path = malloc(strlen(command_path) + strlen(command_name) + 1);
+	if (full_path == NULL)
+	{
+		perror("malloc");
+		return (NULL);
+	}
+	sprintf(full_path, "%s%s", command_path, command_name);
+
+	if (access(full_path, X_OK) != 0)
+	{
+		perror("Command not found");
+		free(full_path);
+		return (NULL);
+	}
+
+	return (full_path);
 }

@@ -5,23 +5,20 @@
  * @str: string given
  */
 
-void trim(char *str)
+char *trim(char *str)
 {
-	int start = 0;
-	int end = strlen(str) - 1;
-	int index = 0;
-	int i;
+	char *start = str;
+	char *end = str + strlen(str) - 1;
 
-	while (isspace(str[start]))
+	while (isspace((unsigned char)*start))
 		start++;
 
-	while (end >= 0 && isspace(str[end]))
+	while (end > start && isspace((unsigned char)*end))
 		end--;
 
-	for (i = start; i <= end; i++)
-		str[index++] = str[i];
+	end[1] = '\0';
 
-	str[index] = '\0';
+	return (start);
 }
 
 /**
