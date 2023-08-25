@@ -9,7 +9,7 @@ user.
 ### 📁 On the project:
 
 - main.c
-- non_interactive.c
+- assistive_funcs.c
 - simple_shell.h
 - man_1_simple_shell.3
 - README.md
