@@ -8,18 +8,24 @@
 
 char *trim(char *str)
 {
-	char *start = str;
-	char *end = str + strlen(str) - 1;
+	int start = 0;
+	int end = strlen(str) - 1;
+	int index = 0;
+	int i;
 
-	while (isspace((unsigned char)*start))
+	while (isspace(str[start])) {
 		start++;
-
-	while (end > start && isspace((unsigned char)*end))
+	}
+	while (end >= 0 && isspace(str[end])) {
 		end--;
+	}
+	for (i = start; i <= end; i++)
+	{
+		str[index++] = str[i];
+	}
 
-	end[1] = '\0';
-
-	return (start);
+	str[index] = '\0';
+	return (str);
 }
 
 /**
