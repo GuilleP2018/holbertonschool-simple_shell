@@ -49,7 +49,6 @@ void exec_command(char *command, char **env)
 	char *token = NULL;
 	char **tokens = NULL;
 	int token_count = 0;
-	char *full_path;
 
 	token = strtok(command, " \n");
 	if (token == NULL)
@@ -80,10 +79,6 @@ void exec_command(char *command, char **env)
 		return;
 	}
 	tokens[token_count] = NULL;
-	if (access(tokens[0], X_OK) == -1)
-		full_path = find_path(tokens[0]);
-	free(tokens[0]);
-	tokens[0] = full_path;
 	child_exec(tokens, env);
 	free_array(tokens, token_count);
 }
