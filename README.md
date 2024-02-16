@@ -50,6 +50,6 @@ AUTHORS README.md assistive_funcs.c hsh main.c man_1_simple_shell.3 simple_shell
 
 Hi! I'm Guillermo, one of the developers behind this project! Here is my github if you are interested to learn more about my projects! : https://github.com/GuilleP2018
 
-Hi! I'm Hector J. Vazquez a passionate software developer dedicated to creating technology as a tool for creating inclusivity and accessibility for marginalized communities. Committed to utilizing innovative solutions to break down barriers and empower individuals through technology. [Github](https://github.com/Pepesaur96) | [LinkedIn](https://www.linkedin.com/in/h%C3%A9ctor-v%C3%A1zquez-4b2a34170/)
+Hi! I'm Hector J. Vazquez, a passionate software developer dedicated to creating technology as a tool for creating inclusivity and accessibility for marginalized communities. Committed to utilizing innovative solutions to break down barriers and empower individuals through technology. [Github](https://github.com/Pepesaur96) | [LinkedIn](https://www.linkedin.com/in/h%C3%A9ctor-v%C3%A1zquez-4b2a34170/)
 
 ![post](./wwelcome%20to%20shell.jpeg)
